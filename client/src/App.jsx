@@ -5,11 +5,6 @@ import { ApolloClient, InMemoryCache, createHttpLink, ApolloProvider } from '@ap
 import { setContext } from '@apollo/client/link/context';
 import { Navbar, Nav, Container, Modal, Tab } from 'react-bootstrap';
 
-
-
-
-
-
 import SearchBooks from "./pages/SearchBooks";
 import SavedBooks from "./pages/SavedBooks";
 
