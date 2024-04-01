@@ -1,31 +1,43 @@
 import React from "react";
-import './App.css';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { ApolloClient, ApolloProvider } from "@apollo/client";
+import { Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Navbar from './components/Navbar';
-import SearchBooks from './pages/SearchBooks'; 
-import SavedBooks from './pages/SavedBooks'; // Example component for About page
+//graphQL
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  HttpLink,
+  from,
+} from "@apollo/client";
+
+
+// import Navbar from "./components/Navbar";
+import SearchBooks from "./pages/SearchBooks";
+import SavedBooks from "./pages/SavedBooks";
 
 const client = new ApolloClient({
-  // Your Apollo Client configuration
+  request: (operation) => {
+    const token = localStorage.getItem("id_token");
+
+    operation.setContext({
+      // populates the header session that will communicate with Apollo
+      headers: {
+        authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+  },
+  uri: "/graphql",
 });
 
 function App() {
   return (
-    <ApolloProvider client={client}>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <Switch>
-            <Route path="/" component={SearchBooks} />
-            <Route path="/saved" component={SavedBooks} />
-            <Route path="*" component={() => <div>Not Found</div>} />
-          </Switch>
-        </div>
-      </Router>
-    </ApolloProvider>
+    <>
+      <Navbar />
+      <Outlet />
+    </>
   );
 }
+//App.jsx: Create an Apollo Provider to make every request work with the Apollo server.
 
 export default App;

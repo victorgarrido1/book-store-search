@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3001;
 
 
 //apply the apollo middleware
-const startServer = async () => {
+const startApolloServer = async () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
@@ -37,3 +37,5 @@ app.use(routes);
 db.once("open", () => {
   app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
 });
+
+startApolloServer();
