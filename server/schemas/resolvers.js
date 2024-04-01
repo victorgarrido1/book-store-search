@@ -1,41 +1,50 @@
-const { Thought } = require('../models');
+const { User } = require('../models');
+
+//import the signToken function from auth
+const  { signToken } = require('../utils/auth');
+const { AuthenticationError } = require('apollo-server-express');
+
 
 const resolvers = {
   Query: {
-    thoughts: async () => {
-      return Thought.find().sort({ createdAt: -1 });
+    me: async () => {
+      return User.find().populate('username');
     },
 
-    thought: async (parent, { thoughtId }) => {
-      return Thought.findOne({ _id: thoughtId });
-    },
+    // thought: async (parent, { thoughtId }) => {
+    //   return Thought.findOne({ _id: thoughtId });
+    // },
   },
 
   Mutation: {
-    addThought: async (parent, { thoughtText, thoughtAuthor }) => {
-      return Thought.create({ thoughtText, thoughtAuthor });
-    },
-    addComment: async (parent, { thoughtId, commentText }) => {
-      return Thought.findOneAndUpdate(
-        { _id: thoughtId },
-        {
-          $addToSet: { comments: { commentText } },
-        },
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
-    },
-    removeThought: async (parent, { thoughtId }) => {
-      return Thought.findOneAndDelete({ _id: thoughtId });
-    },
-    removeComment: async (parent, { thoughtId, commentId }) => {
-      return Thought.findOneAndUpdate(
-        { _id: thoughtId },
-        { $pull: { comments: { _id: commentId } } },
-        { new: true }
-      );
+    login: async (parent, { email, password }) => {
+      const user = await User.findOne({ email});
+      if (!user) {
+        throw new AuthenticationError('Invalid Credentials');
+      }
+//       return Thought.create({ thoughtText, thoughtAuthor });
+//     },
+//     addComment: async (parent, { thoughtId, commentText }) => {
+//       return Thought.findOneAndUpdate(
+//         { _id: thoughtId },
+//         {
+//           $addToSet: { comments: { commentText } },
+//         },
+//         {
+//           new: true,
+//           runValidators: true,
+//         }
+//       );
+//     },
+//     removeThought: async (parent, { thoughtId }) => {
+//       return Thought.findOneAndDelete({ _id: thoughtId });
+//     },
+//     removeComment: async (parent, { thoughtId, commentId }) => {
+//       return Thought.findOneAndUpdate(
+//         { _id: thoughtId },
+//         { $pull: { comments: { _id: commentId } } },
+//         { new: true }
+//       );
     },
   },
 };
